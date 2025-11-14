@@ -33,6 +33,8 @@ export function useSearchMates({
         size,
       }),
     initialPageParam: 0,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
     staleTime: 60 * 1000,
     getNextPageParam: (lastPage) => {
       const currentPage = lastPage.pageable?.pageNumber ?? 0;

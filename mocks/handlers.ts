@@ -328,7 +328,7 @@ export const handlers = [
   // 메이트 탐색 API만 모킹
   http.get(
     `${process.env.NEXT_PUBLIC_BASE_URL}/v1/users/mates`,
-    async ({ request }) => {
+    ({ request }) => {
       const url = new URL(request.url);
       const page = parseInt(url.searchParams.get("page") || "0");
       const size = parseInt(url.searchParams.get("size") || "10");
@@ -343,11 +343,6 @@ export const handlers = [
         preferredTimes,
         workoutTypes,
       });
-
-      if (page > 0) {
-        console.log("⏳ 다음 페이지 로딩 - 1.5초 딜레이");
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-      }
 
       // 필터링 로직
       let filteredMates = [...mockMates.content];
