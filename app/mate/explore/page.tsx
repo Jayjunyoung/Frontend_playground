@@ -8,21 +8,21 @@ import {
 import { cookies } from "next/headers";
 import ExploreMate from "../_components/ExploreMate/ExploreMate";
 
+// app/mate/explore/page.tsx 수정
+
 export default async function ExplorePage() {
   console.log("🔷 [SERVER] ExplorePage 시작");
 
   const queryClient = new QueryClient();
-
   const cookieStore = await cookies();
   const serverToken = cookieStore.get("accessToken")?.value;
 
   console.log("🔷 [SERVER] 서버 토큰 존재 여부:", !!serverToken);
-  console.log(
-    "🔷 [SERVER] 서버 토큰 값:",
-    serverToken ? `${serverToken.slice(0, 20)}...` : "없음",
-  );
 
-  if (serverToken) {
+  // 개발 환경에서는 prefetch 건너뛰기 (MSW 테스트용)
+  const isDevelopment = process.env.NODE_ENV === "development";
+
+  if (serverToken && !isDevelopment) {
     console.log("🔷 [SERVER] prefetchInfiniteQuery 시작");
 
     try {
@@ -55,7 +55,7 @@ export default async function ExplorePage() {
       console.error("❌ [SERVER] prefetchInfiniteQuery 실패:", error);
     }
   } else {
-    console.log("⚠️ [SERVER] 서버 토큰이 없어서 prefetch 건너뜀");
+    console.log("⚠️ [SERVER] prefetch 건너뜀 (개발 모드 또는 토큰 없음)");
   }
 
   const isEditingProfile = false;

@@ -1,5 +1,6 @@
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 import AuthGuard from "@/components/common/AuthGuard";
+import { MSWProvider } from "@/components/common/msw-provider";
 import ReactQueryProvider from "@/components/common/ReactQueryProvider";
 import ThemeClient from "@/components/common/ThemeClient";
 import GlobalStyle from "@/styles/GlobalStyle";
@@ -8,6 +9,7 @@ import localFont from "next/font/local";
 import Script from "next/script";
 import React, { Suspense } from "react";
 import KakaoScript from "./(beforeLogin)/auth/_components/KakaoScript";
+
 import "./globals.css";
 
 declare global {
@@ -72,17 +74,19 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={`${pretendard.variable} font-pretendard`}>
-        <ReactQueryProvider>
-          <ThemeClient>
-            <GlobalStyle />
-            <AuthGuard>
-              <Suspense fallback={null}>
-                <AnalyticsTracker />
-              </Suspense>
-              {children}
-            </AuthGuard>
-          </ThemeClient>
-        </ReactQueryProvider>
+        <MSWProvider>
+          <ReactQueryProvider>
+            <ThemeClient>
+              <GlobalStyle />
+              <AuthGuard>
+                <Suspense fallback={null}>
+                  <AnalyticsTracker />
+                </Suspense>
+                {children}
+              </AuthGuard>
+            </ThemeClient>
+          </ReactQueryProvider>
+        </MSWProvider>
       </body>
       <KakaoScript />
     </html>

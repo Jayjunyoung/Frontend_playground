@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         hostname: "aws.s3.com",
         pathname: "**",
       },
+      {
+        protocol: "https",
+        hostname: "i.pravatar.cc",
+        pathname: "**",
+      },
     ],
   },
   eslint: {
