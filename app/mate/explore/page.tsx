@@ -1,3 +1,4 @@
+import LoaderIcon from "@/assets/images/loader.svg";
 import Header from "@/components/common/Header/Header";
 import { fetchMates } from "@/services/mate/searchMate";
 import {
@@ -6,9 +7,8 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { cookies } from "next/headers";
+import { Suspense } from "react";
 import ExploreMate from "../_components/ExploreMate/ExploreMate";
-
-// app/mate/explore/page.tsx 수정
 
 export default async function ExplorePage() {
   console.log("🔷 [SERVER] ExplorePage 시작");
@@ -71,8 +71,42 @@ export default async function ExplorePage() {
     <>
       <Header isEditingProfile={isEditingProfile} />
       <HydrationBoundary state={dehydratedState}>
-        <ExploreMate />
+        <Suspense fallback={<LoadingSkeleton />}>
+          <ExploreMate />
+        </Suspense>
       </HydrationBoundary>
     </>
   );
 }
+
+const LoadingSkeleton = () => {
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        height: "100%",
+        backgroundColor: "#ffffff",
+        gap: "16px",
+      }}
+    >
+      <LoaderIcon
+        className="animate-spin"
+        style={{ width: "24px", height: "24px" }}
+      />
+      <p
+        style={{
+          fontSize: "16px",
+          fontWeight: 500,
+          color: "#8A92A3",
+        }}
+      >
+        메이트를 불러오는 중...
+      </p>
+    </div>
+  );
+};

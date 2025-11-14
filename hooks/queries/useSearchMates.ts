@@ -1,6 +1,6 @@
 import type { MateListResponse } from "@/services/mate/searchMate";
 import { fetchMates } from "@/services/mate/searchMate";
-import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import { InfiniteData, useSuspenseInfiniteQuery } from "@tanstack/react-query";
 
 export function useSearchMates({
   nickname,
@@ -15,7 +15,7 @@ export function useSearchMates({
   workoutTypes?: string[];
   size?: number;
 }) {
-  return useInfiniteQuery<
+  return useSuspenseInfiniteQuery<
     MateListResponse,
     Error,
     InfiniteData<MateListResponse>,
