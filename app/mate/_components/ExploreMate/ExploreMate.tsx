@@ -15,6 +15,7 @@ import FilterPanel from "./FilterPanel/FilterPanel";
 
 import ProfileImgBadge from "@/components/common/DefaultProfileImg/ProfileImgBadge";
 import { useMateFilterStore } from "@/stores/mateFilterStore";
+import MateCardSkeleton from "../mate-card-skeleton";
 import * as S from "./style";
 
 function getTimeSlot(
@@ -71,6 +72,32 @@ export default function ExploreMate() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const mates = data?.pages.flatMap((page) => page.content) ?? [];
+
+  const getNextPageSkeletonCount = () => {
+    if (!data?.pages.length) return 10;
+
+    const lastPage = data.pages[data.pages.length - 1];
+    const pageSize = 10;
+    const currentTotalItems = mates.length;
+    const totalPages = lastPage.totalPages || 0;
+    const currentPage = lastPage.pageable.pageNumber;
+
+    // 다음 페이지가 마지막 페이지인지 확인
+    const isNextPageLast = currentPage + 1 >= totalPages - 1;
+
+    if (isNextPageLast) {
+      // 마지막 페이지면 남은 개수만 계산
+      // 총 아이템 개수 = totalPages * pageSize (대략적)
+      const estimatedTotal = totalPages * pageSize;
+      const remaining = estimatedTotal - currentTotalItems;
+      return Math.min(remaining, pageSize);
+    }
+
+    // 일반 페이지면 페이지 사이즈만큼
+    return pageSize;
+  };
+
+  const skeletonCount = getNextPageSkeletonCount();
 
   const isFilterApplied =
     !!filters.gender || !!filters.time || filters.sports.length > 0;
@@ -206,6 +233,11 @@ export default function ExploreMate() {
               </S.MateListItem>
             );
           })}
+
+          {isFetchingNextPage &&
+            Array.from({ length: skeletonCount }).map((_, index) => (
+              <MateCardSkeleton key={`skeleton-${index}`} />
+            ))}
         </S.MateList>
       )}
 
