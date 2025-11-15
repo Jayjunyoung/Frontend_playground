@@ -38,7 +38,7 @@ export function useSearchMates({
         await queryClient.prefetchInfiniteQuery({
           queryKey: ["mates"],
           initialPageParam: 0,
-          queryFn: ({ pageParam = 0 }) => fetchMates({ pageParam, size }),
+          queryFn: ({ pageParam = page }) => fetchMates({ pageParam, size }),
           getNextPageParam: (lastPage: MateListResponse) => {
             const currentPage = lastPage.pageable?.pageNumber ?? 0;
             const totalPages = lastPage.totalPages ?? 1;
