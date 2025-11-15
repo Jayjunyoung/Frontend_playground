@@ -15,6 +15,7 @@ import FilterPanel from "./FilterPanel/FilterPanel";
 
 import ProfileImgBadge from "@/components/common/DefaultProfileImg/ProfileImgBadge";
 import { useMateFilterStore } from "@/stores/mateFilterStore";
+import { sessionStorageUtil } from "@/utils/session-storage-scroll";
 import MateCardSkeleton from "../mate-card-skeleton";
 import * as S from "./style";
 
@@ -30,6 +31,9 @@ function getTimeSlot(
 export default function ExploreMate() {
   const { filter, resetFilter } = useMateFilterStore();
   const router = useRouter();
+  const hasRestoredScroll = useRef(false);
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const iconMapping: Record<string, JSX.Element> = {
     morning: <MorningIcon />,
@@ -72,6 +76,23 @@ export default function ExploreMate() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const mates = data?.pages.flatMap((page) => page.content) ?? [];
+
+  // 스크롤 복원 (컴포넌트 마운트 시 한 번만)
+  useEffect(() => {
+    if (hasRestoredScroll.current) return;
+
+    const cache = sessionStorageUtil.getScrollPosition();
+    if (!cache) return;
+
+    const { anchorPosition } = cache;
+
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = anchorPosition;
+    }
+
+    sessionStorageUtil.removeScrollPosition();
+    hasRestoredScroll.current = true;
+  }, [mates.length]);
 
   const getNextPageSkeletonCount = () => {
     if (!data?.pages.length) return 10;
@@ -127,11 +148,20 @@ export default function ExploreMate() {
     setShowFilterPanel(!showFilterPanel);
   };
 
+  const handleMateClick = (mateId: number, index: number) => {
+    // ✨ 스크롤 컨테이너의 scrollTop 사용
+    const scrollPosition = scrollContainerRef.current?.scrollTop || 0;
+
+    sessionStorageUtil.saveScrollPosition(scrollPosition, index);
+
+    router.push(`/mate/mateprofile/${encodeURIComponent(mateId)}`);
+  };
+
   const filterCount =
     (filters.gender ? 1 : 0) + (filters.time ? 1 : 0) + filters.sports.length;
 
   return (
-    <S.ExploreMateContainer>
+    <S.ExploreMateContainer ref={scrollContainerRef}>
       {/* 필터 버튼 */}
       <S.FilterWrapper>
         <S.MateFilterTrigger
@@ -179,17 +209,13 @@ export default function ExploreMate() {
         </S.EmptyWrapper>
       ) : (
         <S.MateList>
-          {mates.map((mate) => {
+          {mates.map((mate, index) => {
             const timeSlot = getTimeSlot(mate.preferredWorkoutTime);
 
             return (
               <S.MateListItem
                 key={mate.id}
-                onClick={() =>
-                  router.push(
-                    `/mate/mateprofile/${encodeURIComponent(mate.id)}`,
-                  )
-                }
+                onClick={() => handleMateClick(mate.id, index)}
               >
                 <ProfileImgBadge
                   imageUrl={mate.profileUrl}
