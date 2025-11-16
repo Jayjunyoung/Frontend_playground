@@ -47,7 +47,11 @@ export default function ExploreMate() {
     gender: string | null;
     time: string | null;
     sports: string[];
-  }>({ gender: null, time: filter.time, sports: filter.sports });
+  }>({
+    gender: null,
+    time: null,
+    sports: [],
+  });
 
   const preferredTimes = filters.time ? [filters.time] : undefined;
   const workoutTypes = filters.sports.length > 0 ? filters.sports : undefined;
