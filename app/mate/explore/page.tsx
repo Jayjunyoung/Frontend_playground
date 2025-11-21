@@ -1,4 +1,5 @@
 import LoaderIcon from "@/assets/images/loader.svg";
+import DeferredComponent from "@/components/common/DeferredComponent";
 import Header from "@/components/common/Header/Header";
 import { fetchMates } from "@/services/mate/searchMate";
 import {
@@ -71,7 +72,13 @@ export default async function ExplorePage() {
     <>
       <Header isEditingProfile={isEditingProfile} />
       <HydrationBoundary state={dehydratedState}>
-        <Suspense fallback={<LoadingSkeleton />}>
+        <Suspense
+          fallback={
+            <DeferredComponent>
+              <LoadingSkeleton />
+            </DeferredComponent>
+          }
+        >
           <ExploreMate />
         </Suspense>
       </HydrationBoundary>
