@@ -3,7 +3,7 @@ import DeferredComponent from "@/components/common/DeferredComponent";
 import Frame from "@/components/layout/Frame";
 import { Suspense } from "react";
 
-export default function MyPageLayout({
+export default function MatePageLayout({
   children,
 }: {
   children: React.ReactNode;
