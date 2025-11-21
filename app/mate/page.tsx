@@ -17,7 +17,7 @@ export default function MatePage() {
   const [activeTab, setActiveTab] = useState("메이트");
   const router = useRouter();
 
-  const { data: mateInfo, isLoading } = useMateInfo();
+  const { data: mateInfo } = useMateInfo();
   const isMatched = !!mateInfo;
 
   const handleTabClick = (tab: string) => {
