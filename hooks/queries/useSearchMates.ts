@@ -1,12 +1,6 @@
 import type { MateListResponse } from "@/services/mate/searchMate";
 import { fetchMates } from "@/services/mate/searchMate";
-import { sessionStorageUtil } from "@/utils/session-storage-scroll";
-import {
-  InfiniteData,
-  useQueryClient,
-  useSuspenseInfiniteQuery,
-} from "@tanstack/react-query";
-import { useEffect } from "react";
+import { InfiniteData, useSuspenseInfiniteQuery } from "@tanstack/react-query";
 
 export function useSearchMates({
   nickname,
@@ -21,36 +15,6 @@ export function useSearchMates({
   workoutTypes?: string[];
   size?: number;
 }) {
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    const restoreScrollData = async () => {
-      const cache = sessionStorageUtil.getScrollPosition();
-      if (!cache) return;
-
-      const { clickedMateIndex } = cache;
-
-      // 필요한 페이지 수 계산
-      const neededPages = Math.ceil(clickedMateIndex / size);
-
-      // 각 페이지 prefetch
-      for (let page = 0; page < neededPages; page++) {
-        await queryClient.prefetchInfiniteQuery({
-          queryKey: ["mates"],
-          initialPageParam: 0,
-          queryFn: ({ pageParam = page }) => fetchMates({ pageParam, size }),
-          getNextPageParam: (lastPage: MateListResponse) => {
-            const currentPage = lastPage.pageable?.pageNumber ?? 0;
-            const totalPages = lastPage.totalPages ?? 1;
-            return currentPage + 1 <= totalPages ? currentPage + 1 : undefined;
-          },
-        });
-      }
-    };
-
-    restoreScrollData();
-  }, []);
-
   return useSuspenseInfiniteQuery<
     MateListResponse,
     Error,

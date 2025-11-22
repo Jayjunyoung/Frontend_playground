@@ -14,6 +14,7 @@ import { JSX, useEffect, useRef, useState } from "react";
 import FilterPanel from "./FilterPanel/FilterPanel";
 
 import ProfileImgBadge from "@/components/common/DefaultProfileImg/ProfileImgBadge";
+import { useScrollRestoration } from "@/hooks/useScrollRestoration";
 import { useMateFilterStore } from "@/stores/mateFilterStore";
 import { sessionStorageUtil } from "@/utils/session-storage-scroll";
 import MateCardSkeleton from "../mate-card-skeleton";
@@ -31,7 +32,6 @@ function getTimeSlot(
 export default function ExploreMate() {
   const { filter, resetFilter } = useMateFilterStore();
   const router = useRouter();
-  const hasRestoredScroll = useRef(false);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -81,22 +81,7 @@ export default function ExploreMate() {
 
   const mates = data?.pages.flatMap((page) => page.content) ?? [];
 
-  // 스크롤 복원 (컴포넌트 마운트 시 한 번만)
-  useEffect(() => {
-    if (hasRestoredScroll.current) return;
-
-    const cache = sessionStorageUtil.getScrollPosition();
-    if (!cache) return;
-
-    const { anchorPosition } = cache;
-
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = anchorPosition;
-    }
-
-    sessionStorageUtil.removeScrollPosition();
-    hasRestoredScroll.current = true;
-  }, [mates.length]);
+  useScrollRestoration(scrollContainerRef, mates);
 
   const getNextPageSkeletonCount = () => {
     if (!data?.pages.length) return 10;
