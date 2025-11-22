@@ -153,7 +153,6 @@ export default function ExploreMate() {
   };
 
   const handleMateClick = (mateId: number, index: number) => {
-    // ✨ 스크롤 컨테이너의 scrollTop 사용
     const scrollPosition = scrollContainerRef.current?.scrollTop || 0;
 
     sessionStorageUtil.saveScrollPosition(scrollPosition, index);
