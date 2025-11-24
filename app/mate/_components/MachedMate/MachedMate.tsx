@@ -3,7 +3,9 @@
 import { Typography } from "@/components/atoms/Typography";
 import Button from "@/components/common/Button";
 import DefaultProfileImg from "@/components/common/DefaultProfileImg/DefaultProfileImg";
+import Toast from "@/components/common/Toast/Toast";
 import { BUTTON_SIZES, BUTTON_VARIANTS } from "@/constants/Button";
+import { TOAST_STATUSES } from "@/constants/Toast";
 import { useMateInfo } from "@/hooks/queries/useMateInfo";
 import { MyPageData, useMyPageInfo } from "@/hooks/queries/useMypageInfo";
 import { unmatchMate } from "@/services/mate/unmatchMate";
@@ -120,7 +122,10 @@ export default function MatchedMate() {
       await queryClient.invalidateQueries({ queryKey: ["mateInfo"] });
       setShowModal(false);
     } catch (error) {
-      alert(error);
+      Toast({
+        message: "메이트 해제에 실패했습니다.",
+        status: TOAST_STATUSES.ERROR,
+      });
     }
   };
 
