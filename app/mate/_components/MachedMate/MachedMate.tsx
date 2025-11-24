@@ -33,8 +33,8 @@ function sortKoreanDays(days: string[]) {
 export default function MatchedMate() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: myProfile, isLoading: isLoadingMy } = useMyPageInfo();
-  const { data: mateInfo, isLoading } = useMateInfo();
+  const { data: myProfile } = useMyPageInfo();
+  const { data: mateInfo } = useMateInfo();
 
   const [errorMap, setErrorMap] = useState<{ [id: string]: boolean }>({});
 
